@@ -8,10 +8,9 @@ public abstract class AbstractAlgoCache <K,V>  implements IAlgoCache <K,V>
 	
 	protected int capacity;
 	
-
 	public	AbstractAlgoCache(int capacity)
 	{
-	 this.capacity=capacity;
+		this.capacity=capacity;
 	}
 	
 	public abstract V getElement(K key);

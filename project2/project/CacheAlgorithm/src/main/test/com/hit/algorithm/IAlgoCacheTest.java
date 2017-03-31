@@ -71,7 +71,7 @@ public class IAlgoCacheTest {
 		LFUAlgo.getElement(3);
 		
 		
-		assertEquals("b",LFUAlgo.putElement(4, "d"));	//shouldnt be "c" instead "a" ??	
+		assertEquals("b",LFUAlgo.putElement(4, "d"));	
 	}
 	
 	public void NullLfUAlgoUnitTest()
@@ -86,7 +86,7 @@ public class IAlgoCacheTest {
 		LFUAlgo.putElement(3, "c");
 		LFUAlgo.getElement(3);
 		LFUAlgo.getElement(3);
-		assertEquals(null,LFUAlgo.putElement(4, "d"));	//shouldnt be "c" instead "a" ??	
+		assertEquals(null,LFUAlgo.putElement(4, "d"));	
 	}
 	
 	@Test
@@ -104,6 +104,23 @@ public class IAlgoCacheTest {
 		//test remove function
 		LFUAlgo.removeElement(1);
 		assertNull(LFUAlgo.getElement(1));
+	}
+	
+	@Test
+	public void SecondChanceAlgoTest()
+	{
+		/** 
+		*reference bits are initialized to true for the first time 
+		*after the "second chance" they will be false
+		*/
+		SecondChanceAlgoCacheImpl algo = new SecondChanceAlgoCacheImpl(3);
+		
+		algo.putElement(1, "a"); //reference bit = true
+		algo.putElement(2, "b"); //reference bit = true
+		algo.putElement(3, "c"); //reference bit = true
+		assertEquals("a", algo.putElement(4, "d")); //reference bit of a,b,c = false and for d = true
+		assertEquals("d", algo.getElement(4));
+		assertEquals("b", algo.putElement(5, "e"));
 	}
 	
 }

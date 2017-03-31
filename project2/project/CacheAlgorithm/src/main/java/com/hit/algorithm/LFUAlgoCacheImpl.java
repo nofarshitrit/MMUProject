@@ -5,8 +5,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-
-
 public class LFUAlgoCacheImpl<K,V> extends AbstractAlgoCache<K, V>{
 
 	private Map<K,V> cacheLfu;

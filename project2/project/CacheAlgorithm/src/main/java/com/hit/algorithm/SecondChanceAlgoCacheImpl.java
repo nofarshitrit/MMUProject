@@ -2,59 +2,33 @@ package com.hit.algorithm;
 import java.util.*;
 
 public class SecondChanceAlgoCacheImpl<K,V> extends AbstractAlgoCache<K, V> {
-	
 	private LinkedHashMap<K,V> cache;
-	private LinkedHashMap<K,Boolean> referenceBit;
-	private Random randomReferenceBit;
+	private HashMap<K,Boolean> referenceBit;
 	private V FirstElement = null;
 	int recursiveLoop=1;
+	
 	public SecondChanceAlgoCacheImpl(int capacity) {
 		super(capacity);
-		this.cache= new LinkedHashMap<K,V>(capacity){
-		
-			
+		this.cache= new LinkedHashMap<K,V>(capacity)
+		{
 			@Override
-			protected boolean removeEldestEntry(Map.Entry<K, V> eldest) {
-				K eldestKey;
-				
-				if(size() > capacity && recursiveLoop!=size())
+			protected boolean removeEldestEntry(Map.Entry<K, V> eldest){
+				if(size() > capacity )
 				{
-					eldestKey=eldest.getKey();
-					
-					if(referenceBit.get(eldestKey))
-					{
-						recursiveLoop++;
-						
-						if(recursiveLoop == size())
-						{
-							return false;
-						}
-						
-						FirstElement = eldest.getValue();
-						referenceBit.put(eldestKey, false);
-						removeElement(eldestKey);
-						putElement(eldestKey, FirstElement);
-			
-						return false;
-					}
-					else
-					{
-						FirstElement = eldest.getValue();
-						referenceBit.remove(eldestKey);
-						return true;
-					}
+					FirstElement=eldest.getValue();
+					referenceBit.remove(eldest.getKey());
+					return true;
 				}
-				else 
+				else
 				{
 					FirstElement=null;
-					return false;	
+					return false;
 				}
-				
+
 			}
 		};
 		
-		this.referenceBit= new LinkedHashMap<>(capacity);
-		this.randomReferenceBit= new Random();
+		this.referenceBit= new HashMap<>(capacity);
 	}
 	
 	@Override
@@ -62,12 +36,16 @@ public class SecondChanceAlgoCacheImpl<K,V> extends AbstractAlgoCache<K, V> {
 	{
 		return cache.get(key);
 	}
-
+	
 	@Override
 	public  V putElement(K key, V value)
-	{
+	{		
+		if(cache.size()==capacity)
+		{
+			referenceBitChecker(key, value);
+		}
 		
-		referenceBit.put(key,randomReferenceBit.nextBoolean());
+		referenceBit.put(key,true);
 		cache.put(key, value);
 		return FirstElement;		
 	}
@@ -77,5 +55,30 @@ public class SecondChanceAlgoCacheImpl<K,V> extends AbstractAlgoCache<K, V> {
 	{
 		cache.remove(key);
 		referenceBit.remove(key);
+	}
+	
+	private void referenceBitChecker(K key, V value)
+	{
+		HashMap<K,Boolean> temp=new HashMap<>(capacity);
+		temp=referenceBit;
+		Iterator<K> it =temp.keySet().iterator();
+		K k;
+		V v=null;
+		while(it.hasNext())
+		{
+			k=it.next();
+			if(referenceBit.get(k))
+			{
+				referenceBit.put(k, false);
+				v=cache.get(k);
+				cache.remove(k);
+				cache.put(k, v);
+			}
+			else
+			{
+				return;
+			}
+			
+		}
 	}
 }

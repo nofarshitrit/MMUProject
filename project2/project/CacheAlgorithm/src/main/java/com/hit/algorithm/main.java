@@ -16,5 +16,7 @@ public static void main(String[] args) {
 	m2.put(2, "b");
 	m2.put(3, "c");
 	System.out.println(m2.put(4, "d"));
+	System.out.println(m2.put(5, "e"));
+	//System.out.println(m2.put(5, "e"));
 	}
 }
